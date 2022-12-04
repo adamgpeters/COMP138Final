@@ -34,7 +34,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    save_dir = "models/stationary_small/"
+    save_dir = "models/stationary_large/"
 
     def exit_save(model):
         model.save(save_dir + "exit_save")
