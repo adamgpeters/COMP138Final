@@ -1,2 +1,4 @@
 models/*
 logs/*
+logs_stationary_small/*
+__pycache__/*
