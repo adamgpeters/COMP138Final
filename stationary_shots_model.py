@@ -34,7 +34,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    save_dir = "models/stationary_small/"
+    save_dir = "models/stationary_large/"
 
     def exit_save(model):
         model.save(save_dir + "exit_save")
@@ -90,7 +90,7 @@ if __name__ == '__main__':  # Required for multiprocessing
         from torch.nn import Tanh
         policy_kwargs = dict(
             activation_fn=Tanh,
-            net_arch=[64, 64, dict(pi=[32, 32, 32], vf=[32, 32, 32])],
+            net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
         )
 
         model = PPO(
