@@ -34,7 +34,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    save_dir = "models/stationary_large/"
+    save_dir = "models/stationary_small/"
 
     def exit_save(model):
         model.save(save_dir + "exit_save")
@@ -90,7 +90,7 @@ if __name__ == '__main__':  # Required for multiprocessing
         from torch.nn import Tanh
         policy_kwargs = dict(
             activation_fn=Tanh,
-            net_arch=[512, 512, dict(pi=[256, 256, 256], vf=[256, 256, 256])],
+            net_arch=[64, 64, dict(pi=[32, 32, 32], vf=[32, 32, 32])],
         )
 
         model = PPO(
@@ -107,7 +107,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             batch_size=batch_size,             # Batch size as high as possible within reason
             n_steps=steps,                # Number of steps to perform before optimizing network
             # `tensorboard --logdir out/logs` in terminal to see graphs
-            tensorboard_log="logs_stationary_small",
+            tensorboard_log="logs_stationary_large",
             device="auto"                # Uses GPU if available
         )
 
