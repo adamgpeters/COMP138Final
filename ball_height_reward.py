@@ -36,9 +36,9 @@ class BallHeightReward(RewardFunction):
 
 
 class RewardIfScore(ConditionalRewardFunction):
-    def __init__(self, reward_func: RewardFunction, team_only=True):
+    def __init__(self, reward_func: RewardFunction, frame_skip=8):
         super().__init__(reward_func)
-        self.team_only = team_only
+        self.frame_skip = frame_skip
         self.last_registered_scores = [0, 0]
 
     def reset(self, initial_state: GameState):

@@ -8,7 +8,7 @@ from stable_baselines3.ppo import MlpPolicy
 
 from rlgym.utils.obs_builders import AdvancedObs
 # from rlgym.utils.state_setters import DefaultState
-from random_shots_stationary import StationaryShots
+from deterministic_shot import DeterministicShot
 from ball_height_reward import BallHeightReward, RewardIfScore
 from rlgym.utils.terminal_conditions.common_conditions import TimeoutCondition, NoTouchTimeoutCondition, GoalScoredCondition
 from rlgym_tools.sb3_utils import SB3MultipleInstanceEnv
@@ -34,7 +34,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    name_prefix = "stationary_small"
+    name_prefix = "deterministic_small"
     save_dir = "models/" + name_prefix + "/"
 
     def exit_save(model):
@@ -57,13 +57,13 @@ if __name__ == '__main__':  # Required for multiprocessing
                     ),
                     # RewardIfScore(BallHeightReward())
                 ),
-                (1.0, 1.0, 1.0)),
+                (0.1, 1.0, 1.0)),
             # self_play=True,  in rlgym 1.2 'self_play' is depreciated. Uncomment line if using an earlier version and comment out spawn_opponents
             spawn_opponents=False,
             terminal_conditions=[TimeoutCondition(
-                fps * 300), NoTouchTimeoutCondition(fps * 45), GoalScoredCondition()],
+                fps * 5), GoalScoredCondition()],
             obs_builder=AdvancedObs(),  # Not that advanced, good default
-            state_setter=StationaryShots(),
+            state_setter=DeterministicShot(),
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
         )
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             batch_size=batch_size,             # Batch size as high as possible within reason
             n_steps=steps,                # Number of steps to perform before optimizing network
             # `tensorboard --logdir out/logs` in terminal to see graphs
-            tensorboard_log="logs_" + name_prefix + "_2",
+            tensorboard_log="logs_" + name_prefix,
             device="auto"                # Uses GPU if available
         )
 
