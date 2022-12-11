@@ -34,7 +34,7 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    name_prefix = "stationary_small"
+    name_prefix = "stationary_small_from_scratch"
     save_dir = "models/" + name_prefix + "/"
 
     def exit_save(model):
@@ -57,11 +57,12 @@ if __name__ == '__main__':  # Required for multiprocessing
                     ),
                     # RewardIfScore(BallHeightReward())
                 ),
-                (1.0, 1.0, 1.0)),
+                (0.1, 1.0, 1.0)),
             # self_play=True,  in rlgym 1.2 'self_play' is depreciated. Uncomment line if using an earlier version and comment out spawn_opponents
             spawn_opponents=False,
-            terminal_conditions=[TimeoutCondition(
-                fps * 300), NoTouchTimeoutCondition(fps * 45), GoalScoredCondition()],
+            terminal_conditions=[
+                TimeoutCondition(fps * 15),
+                GoalScoredCondition()],
             obs_builder=AdvancedObs(),  # Not that advanced, good default
             state_setter=StationaryShots(),
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
@@ -108,7 +109,7 @@ if __name__ == '__main__':  # Required for multiprocessing
             batch_size=batch_size,             # Batch size as high as possible within reason
             n_steps=steps,                # Number of steps to perform before optimizing network
             # `tensorboard --logdir out/logs` in terminal to see graphs
-            tensorboard_log="logs_" + name_prefix + "_2",
+            tensorboard_log="logs_" + name_prefix,
             device="auto"                # Uses GPU if available
         )
 
