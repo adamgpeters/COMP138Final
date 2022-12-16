@@ -1,4 +1,5 @@
 import numpy as np
+import os.path
 from rlgym.envs import Match
 from rlgym.utils.action_parsers import DiscreteAction
 from stable_baselines3 import PPO
@@ -8,7 +9,7 @@ from stable_baselines3.ppo import MlpPolicy
 
 from rlgym.utils.obs_builders import AdvancedObs
 # from rlgym.utils.state_setters import DefaultState
-from deterministic_shot import DeterministicShot
+from random_shots_stationary import StationaryShots
 from ball_height_reward import BallHeightReward, RewardIfScore
 from rlgym.utils.terminal_conditions.common_conditions import TimeoutCondition, NoTouchTimeoutCondition, GoalScoredCondition
 from rlgym_tools.sb3_utils import SB3MultipleInstanceEnv
@@ -34,8 +35,9 @@ if __name__ == '__main__':  # Required for multiprocessing
     batch_size = target_steps//10
     training_interval = 25_000_000
     mmr_save_frequency = 50_000_000
-    name_prefix = "deterministic_small"
+    name_prefix = "stationary_small_transfer"
     save_dir = "models/" + name_prefix + "/"
+    transfer_dir = "models/deterministic_small/"
 
     def exit_save(model):
         model.save(save_dir + "exit_save")
@@ -61,10 +63,10 @@ if __name__ == '__main__':  # Required for multiprocessing
             # self_play=True,  in rlgym 1.2 'self_play' is depreciated. Uncomment line if using an earlier version and comment out spawn_opponents
             spawn_opponents=False,
             terminal_conditions=[
-                TimeoutCondition(fps * 5),  # 5 seconds
+                TimeoutCondition(fps * 15),
                 GoalScoredCondition()],
             obs_builder=AdvancedObs(),  # Not that advanced, good default
-            state_setter=DeterministicShot(),
+            state_setter=StationaryShots(),
             action_parser=DiscreteAction()  # Discrete > Continuous don't @ me
         )
 
@@ -77,8 +79,10 @@ if __name__ == '__main__':  # Required for multiprocessing
     env = VecNormalize(env, norm_obs=False, gamma=gamma)
 
     try:
+        save_dir_exit_save = save_dir + "exit_save.zip"
         model = PPO.load(
-            save_dir + "exit_save.zip",
+            save_dir_exit_save if os.path.isfile(
+                save_dir_exit_save) else transfer_dir + "exit_save.zip",
             env,
             device="auto",
             # automatically adjusts to users changing instance count, may encounter shaping error otherwise
@@ -87,7 +91,8 @@ if __name__ == '__main__':  # Required for multiprocessing
             #custom_objects={"n_envs": env.num_envs, "n_steps": steps, "batch_size": batch_size, "n_epochs": 10, "learning_rate": 5e-5}
         )
         print("Loaded previous exit save.")
-    except:
+    except Exception as e:
+        print(e)
         print("No saved model found, creating new model.")
         from torch.nn import Tanh
         policy_kwargs = dict(

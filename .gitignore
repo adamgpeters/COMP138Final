@@ -1,4 +1,5 @@
-models/*
+models/stationary_small/*
+models/*.zip
 logs/*
 logs_stationary_small/*
 logs_stationary_small_2/*
