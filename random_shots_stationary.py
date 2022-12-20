@@ -6,7 +6,7 @@ import numpy as np
 
 class StationaryShots(StateSetter):
     def reset(self, state_wrapper: StateWrapper):
-        # Set up our desired spawn location and orientation. Here, we will only change the yaw, leaving the remaining orientation values unchanged.
+        # Set up our desired spawn location and orientation.
         x_width = (SIDE_WALL_X - 1152) * 2
         y_width = (BACK_WALL_Y - 1152) * 2
         desired_car_pos = [
